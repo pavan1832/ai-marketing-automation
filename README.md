@@ -1,309 +1,404 @@
 # ⚡ NexusAI — AI Marketing Campaign Automation Platform
 
-> A production-ready, full-stack AI-powered marketing automation platform. Captures leads, analyzes them with AI, generates personalized outreach campaigns, and tracks performance — all automatically.
+> A production-ready full-stack AI platform that automatically captures leads, scores them with GPT-4o, generates personalized outreach campaigns, and tracks analytics — all without manual intervention.
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://ai-marketing-automation-two.vercel.app)
+[![Backend API](https://img.shields.io/badge/Backend%20API-Render-purple?style=for-the-badge&logo=render)](https://ai-marketing-automation-xtcx.onrender.com/health)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?style=for-the-badge&logo=github)](https://github.com/pavan1832/ai-marketing-automation)
 
 ---
 
-## 📐 Architecture
+## 🚀 Live URLs
 
-```
-Lead Form (Next.js)
-      │
-      ▼
-POST /api/leads  ──►  Express Backend
-                            │
-                     ┌──────┴──────────┐
-                     │                 │
-               MongoDB Atlas     OpenAI GPT-4o
-               (Leads/Campaigns)  (Analysis + Copy)
-                     │                 │
-                     └──────┬──────────┘
-                            │
-                    Campaign Created
-                            │
-                    Email Simulated
-                            │
-                    Webhook Triggered
-                    POST /api/webhook/campaign
-                            │
-                    Admin Dashboard (Next.js)
-                    Analytics · Leads · Campaigns
-```
+| Service | URL |
+|---------|-----|
+| 🌐 Frontend (Vercel) | https://ai-marketing-automation-two.vercel.app |
+| 🔧 Backend API (Render) | https://ai-marketing-automation-xtcx.onrender.com |
+| ❤️ Health Check | https://ai-marketing-automation-xtcx.onrender.com/health |
+| 📊 API Leads | https://ai-marketing-automation-xtcx.onrender.com/api/leads |
 
 ---
 
-## 🧠 Core Features
+## 📌 What is NexusAI?
 
-| Feature | Description |
-|---|---|
-| **Lead Capture** | Web form → `POST /api/leads` → MongoDB |
-| **AI Lead Analysis** | GPT-4o scores leads 1-10, assigns priority, recommends strategy |
-| **Campaign Generator** | GPT-4o writes personalized subject + email body |
-| **Automation Workflow** | Background processing: analyze → generate → send → webhook |
-| **Email Simulation** | Logs delivery details to console (plug in SendGrid/SES) |
-| **Webhooks** | `POST /api/webhook/campaign` triggers on each campaign |
-| **Admin Dashboard** | Stats, leads table, campaigns, charts, webhook log |
-| **Analytics** | Industry breakdown, open/reply rates, timeline charts |
+NexusAI is an AI-powered B2B marketing automation platform that eliminates manual lead handling. When a lead is submitted:
 
----
+1. 🗃️ **Stored instantly** in MongoDB Atlas
+2. 🤖 **GPT-4o analyzes** the lead — assigns a quality score, priority, and recommends a marketing strategy
+3. ✉️ **Personalized campaign** is auto-generated (subject + email body tailored to their company + industry)
+4. 📨 **Email simulated** with delivery logging
+5. 🔗 **Webhook fired** to third-party tools (Zapier, Make, Slack)
+6. 📈 **Analytics tracked** on the real-time dashboard
 
-## 🗂️ Project Structure
-
-```
-ai-marketing-automation/
-│
-├── backend/
-│   ├── server.js                    # Express app entry point
-│   ├── config/
-│   │   └── database.js              # MongoDB connection
-│   ├── models/
-│   │   ├── Lead.js                  # Lead schema
-│   │   ├── Campaign.js              # Campaign schema
-│   │   └── Analytics.js             # Analytics schema
-│   ├── controllers/
-│   │   ├── leadController.js        # Lead CRUD + async AI processing
-│   │   ├── campaignController.js    # Campaign CRUD
-│   │   ├── analyticsController.js   # Aggregated stats
-│   │   └── webhookController.js     # Webhook endpoints
-│   ├── routes/
-│   │   ├── leads.js
-│   │   ├── campaigns.js
-│   │   ├── webhooks.js
-│   │   └── analytics.js
-│   ├── services/
-│   │   ├── aiService.js             # OpenAI API calls
-│   │   ├── emailService.js          # Email simulation
-│   │   └── webhookService.js        # Webhook dispatch
-│   ├── middleware/
-│   │   └── validation.js
-│   └── .env.example
-│
-└── frontend/
-    ├── pages/
-    │   ├── index.js                 # Redirects to /dashboard
-    │   ├── dashboard.js             # Overview stats + recent data
-    │   ├── capture.js               # Lead capture form
-    │   ├── analytics.js             # Charts & metrics
-    │   ├── leads/
-    │   │   ├── index.js             # Leads table with filters
-    │   │   └── [id].js              # Lead detail view
-    │   └── campaigns/
-    │       └── index.js             # All campaigns with filters
-    ├── components/
-    │   ├── layout/
-    │   │   └── Layout.js            # Sidebar + topbar wrapper
-    │   ├── ui/
-    │   │   └── index.js             # StatCard, Badge, Avatar, etc.
-    │   ├── LeadCaptureForm.js
-    │   ├── LeadsTable.js
-    │   └── CampaignCard.js
-    ├── lib/
-    │   ├── api.js                   # Axios client for all endpoints
-    │   └── utils.js                 # Formatters, color helpers
-    └── styles/
-        └── globals.css
-```
+**All of this happens automatically within seconds of form submission.**
 
 ---
 
-## ⚙️ Setup Instructions
+## ✨ Features
 
-### Prerequisites
-- Node.js 18+
-- MongoDB Atlas account (free tier works)
-- OpenAI API key
-
----
-
-### 1. Clone & Install
-
-```bash
-git clone https://github.com/yourname/ai-marketing-automation.git
-cd ai-marketing-automation
-
-# Install backend deps
-cd backend && npm install
-
-# Install frontend deps
-cd ../frontend && npm install
-```
-
----
-
-### 2. Configure Environment Variables
-
-**Backend** — copy `.env.example` to `.env`:
-```bash
-cd backend
-cp .env.example .env
-```
-
-Edit `.env`:
-```env
-PORT=5000
-NODE_ENV=development
-MONGODB_URI=mongodb+srv://<user>:<pass>@cluster0.xxxxx.mongodb.net/ai-marketing
-OPENAI_API_KEY=sk-...
-FRONTEND_URL=http://localhost:3000
-```
-
-**Frontend** — create `.env.local`:
-```bash
-cd frontend
-echo "NEXT_PUBLIC_API_URL=http://localhost:5000" > .env.local
-```
-
----
-
-### 3. Run Development Servers
-
-```bash
-# Terminal 1 — Backend
-cd backend
-npm run dev
-# → http://localhost:5000
-
-# Terminal 2 — Frontend
-cd frontend
-npm run dev
-# → http://localhost:3000
-```
-
----
-
-## 🔌 API Documentation
-
-### Leads
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/leads` | Create lead, trigger AI analysis |
-| `GET` | `/api/leads` | Get all leads (filter: industry, priority, status) |
-| `GET` | `/api/leads/:id` | Get single lead with campaign |
-| `PATCH` | `/api/leads/:id` | Update lead |
-| `DELETE` | `/api/leads/:id` | Delete lead |
-
-**POST /api/leads body:**
-```json
-{
-  "name": "John Smith",
-  "email": "john@realestatepro.com",
-  "company": "RealEstatePro",
-  "industry": "Real Estate",
-  "message": "We want automated lead follow-ups for property inquiries."
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Lead captured. AI analysis in progress.",
-  "lead": { "id": "...", "name": "John Smith", "status": "pending" }
-}
-```
-
----
-
-### Campaigns
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/campaigns` | Get all campaigns (filter: status, industry) |
-| `GET` | `/api/campaigns/:id` | Get single campaign |
-| `POST` | `/api/campaigns/regenerate/:leadId` | Regenerate campaign for a lead |
-| `PATCH` | `/api/campaigns/:id` | Update campaign |
-
----
-
-### Webhooks
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/webhook/campaign` | Trigger campaign for a lead |
-| `POST` | `/api/webhook/lead-status` | Update lead status externally |
-
-**POST /api/webhook/campaign body:**
-```json
-{ "leadId": "65abc123...", "event": "campaign.trigger" }
-```
-
----
-
-### Analytics
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/analytics/overview` | Total leads, conversion rate, open/reply rates |
-| `GET` | `/api/analytics/industry` | Leads grouped by industry |
-| `GET` | `/api/analytics/campaigns` | Campaign performance by industry |
-| `GET` | `/api/analytics/timeline` | 30-day leads & campaigns trend |
-
----
-
-## 🚀 Deployment
-
-### Frontend → Vercel
-```bash
-cd frontend
-npx vercel --prod
-# Set env var: NEXT_PUBLIC_API_URL=https://your-backend.onrender.com
-```
-
-### Backend → Render
-1. Connect your GitHub repo to [render.com](https://render.com)
-2. Set root directory to `backend`
-3. Build command: `npm install`
-4. Start command: `node server.js`
-5. Add environment variables from `.env.example`
-
-### Database → MongoDB Atlas
-1. Create free cluster at [mongodb.com/atlas](https://mongodb.com/atlas)
-2. Create a database user
-3. Copy the connection string into `MONGODB_URI`
-4. Whitelist all IPs (0.0.0.0/0) for hosted backends
-
----
-
-## 🔒 Environment Variables
-
-| Variable | Required | Description |
-|---|---|---|
-| `MONGODB_URI` | ✅ | MongoDB Atlas connection string |
-| `OPENAI_API_KEY` | ✅ | OpenAI API key (GPT-4o) |
-| `PORT` | ❌ | Backend port (default: 5000) |
-| `FRONTEND_URL` | ❌ | Allowed CORS origin |
-| `WEBHOOK_URL` | ❌ | External webhook endpoint |
-| `WEBHOOK_SECRET` | ❌ | Webhook signing secret |
+- **AI Lead Scoring** — GPT-4o scores each lead 1-10 with priority level (High/Medium/Low)
+- **AI Campaign Generator** — Personalized email subject + body per lead using their company context
+- **Real-time Dashboard** — KPI cards, charts, lead table with filters
+- **Analytics Charts** — 30-day trend (line), industry performance (bar), distribution (pie)
+- **Webhook Automation** — POST lead data to any URL (Zapier, Make, Slack, custom)
+- **Campaign Regeneration** — Re-run AI campaign generation for any existing lead
+- **Graceful Fallbacks** — Pipeline continues even if OpenAI API is unavailable
+- **Rate Limiting** — 100 requests/15 min per IP on all API endpoints
+- **CORS Protected** — Whitelisted origin only
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js 14, React 18, Tailwind CSS |
-| Backend | Node.js, Express.js |
-| Database | MongoDB + Mongoose |
-| AI | OpenAI GPT-4o |
-| Charts | Recharts |
-| Icons | Lucide React |
-| Deployment | Vercel (FE) + Render (BE) + MongoDB Atlas |
+### Frontend
+| Technology | Purpose |
+|------------|---------|
+| Next.js 14 | React framework, file-based routing |
+| React 18 | UI components |
+| Tailwind CSS | Utility-first styling |
+| Recharts | Analytics charts |
+| Axios | API HTTP client |
+| Lucide React | Icons |
+
+### Backend
+| Technology | Purpose |
+|------------|---------|
+| Node.js 22 | Runtime |
+| Express.js 4 | REST API framework |
+| Mongoose 8 | MongoDB ODM |
+| OpenAI SDK 4 | GPT-4o integration |
+| Helmet | Security headers |
+| express-rate-limit | API rate limiting |
+
+### Infrastructure
+| Service | Provider |
+|---------|----------|
+| Frontend Hosting | Vercel |
+| Backend Hosting | Render |
+| Database | MongoDB Atlas |
+| AI API | OpenAI (GPT-4o) |
+| Source Control + CI/CD | GitHub |
 
 ---
 
-## 🎯 Optional Enhancements
+## 📁 Project Structure
 
-- [ ] Integrate real SendGrid / AWS SES for actual email delivery
-- [ ] Add Zapier/Make webhook for multi-step automation
-- [ ] Lead scoring dashboard with drag-to-filter
-- [ ] Automated follow-up sequences (Day 3, Day 7, Day 14)
-- [ ] Campaign A/B testing with variant generation
-- [ ] JWT authentication for the admin panel
+```
+ai-marketing-automation/
+├── backend/
+│   ├── config/
+│   │   └── database.js          # MongoDB Atlas connection
+│   ├── controllers/
+│   │   ├── leadController.js    # Lead CRUD + async AI pipeline
+│   │   ├── campaignController.js
+│   │   ├── analyticsController.js
+│   │   └── webhookController.js
+│   ├── models/
+│   │   ├── Lead.js              # Lead schema with AI analysis fields
+│   │   ├── Campaign.js          # Campaign schema with analytics
+│   │   └── Analytics.js
+│   ├── routes/
+│   │   ├── leads.js
+│   │   ├── campaigns.js
+│   │   ├── analytics.js
+│   │   └── webhooks.js
+│   ├── services/
+│   │   ├── aiService.js         # GPT-4o: analyze lead + generate campaign
+│   │   ├── emailService.js      # Email simulation with logging
+│   │   └── webhookService.js    # Outbound webhook dispatch
+│   ├── middleware/
+│   │   └── validation.js
+│   ├── server.js                # Express app entry point
+│   └── package.json
+│
+└── frontend/
+    ├── components/
+    │   ├── layout/Layout.js     # Sidebar + topbar
+    │   ├── ui/index.js          # Shared UI components
+    │   ├── LeadCaptureForm.js
+    │   ├── LeadsTable.js
+    │   └── CampaignCard.js
+    ├── lib/
+    │   ├── api.js               # Typed Axios API client
+    │   └── utils.js             # Formatters, helpers
+    ├── pages/
+    │   ├── index.js             # Redirect to dashboard
+    │   ├── dashboard.js         # Overview stats + charts
+    │   ├── capture.js           # Lead form + AI pipeline log
+    │   ├── analytics.js         # Full analytics view
+    │   ├── leads/
+    │   │   ├── index.js         # Leads table with filters
+    │   │   └── [id].js          # Lead detail page
+    │   └── campaigns/
+    │       └── index.js         # Campaigns list
+    └── package.json
+```
+
+---
+
+## 🔌 API Reference
+
+**Base URL:** `https://ai-marketing-automation-xtcx.onrender.com`
+
+### Leads
+```
+POST   /api/leads              Create lead + trigger AI pipeline
+GET    /api/leads              Get all leads (filter: industry, priority, status)
+GET    /api/leads/:id          Get single lead with campaign data
+PATCH  /api/leads/:id          Update lead
+DELETE /api/leads/:id          Delete lead
+```
+
+### Campaigns
+```
+GET    /api/campaigns               Get all campaigns (filter: status, industry)
+GET    /api/campaigns/:id           Get single campaign
+POST   /api/campaigns/regenerate/:leadId   Re-run AI generation for a lead
+```
+
+### Analytics
+```
+GET    /api/analytics/overview     KPI summary stats
+GET    /api/analytics/industry     Leads + scores by industry
+GET    /api/analytics/campaigns    Campaign performance by industry
+GET    /api/analytics/timeline     30-day trend data
+```
+
+### Webhooks
+```
+POST   /api/webhook/campaign       Trigger campaign automation
+POST   /api/webhook/lead-status    Update lead status
+```
+
+### Health
+```
+GET    /health                     API health check
+```
+
+---
+
+### Sample Request
+
+```bash
+curl -X POST https://ai-marketing-automation-xtcx.onrender.com/api/leads \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sarah Williams",
+    "email": "sarah@fintrack.io",
+    "company": "FinTrack",
+    "industry": "Finance",
+    "message": "We want an AI system to qualify leads before our sales team contacts them."
+  }'
+```
+
+### Sample Response
+```json
+{
+  "success": true,
+  "message": "Lead captured successfully. AI analysis in progress.",
+  "lead": {
+    "_id": "69ad3800921a838dfd9c4b77",
+    "name": "Sarah Williams",
+    "email": "sarah@fintrack.io",
+    "company": "FinTrack",
+    "industry": "Finance",
+    "status": "pending"
+  }
+}
+```
+
+---
+
+## ⚙️ Local Development Setup
+
+### Prerequisites
+- Node.js 18+
+- npm
+- MongoDB Atlas account (free)
+- OpenAI API key
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/pavan1832/ai-marketing-automation.git
+cd ai-marketing-automation
+```
+
+### 2. Setup Backend
+```bash
+cd backend
+npm install
+```
+
+Create `backend/.env`:
+```env
+PORT=5000
+NODE_ENV=development
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/ai-marketing?retryWrites=true&w=majority
+OPENAI_API_KEY=sk-proj-your-openai-key
+FRONTEND_URL=http://localhost:3000
+WEBHOOK_URL=https://hooks.zapier.com/hooks/catch/xxxxx/xxxxxx/
+WEBHOOK_SECRET=nexusai123
+```
+
+> ⚠️ If your MongoDB password contains `@`, encode it as `%40` in the URI.
+
+```bash
+node server.js
+# ✅ NexusAI Backend running on http://localhost:5000
+# ✅ MongoDB Connected: cluster0.xxxxx.mongodb.net
+```
+
+### 3. Setup Frontend
+```bash
+cd ../frontend
+npm install
+```
+
+Create `frontend/.env.local`:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
+
+```bash
+npm run dev
+# ✅ Frontend running on http://localhost:3000
+```
+
+---
+
+## ☁️ Deployment
+
+### Backend → Render
+1. Create a new **Web Service** on [render.com](https://render.com)
+2. Connect your GitHub repository
+3. Set **Root Directory** to `backend`
+4. Build Command: `npm install`
+5. Start Command: `node server.js`
+6. Add all environment variables from `.env` in the **Environment** tab
+
+### Frontend → Vercel
+1. Import your GitHub repository on [vercel.com](https://vercel.com)
+2. Set **Root Directory** to `frontend`
+3. Framework: **Next.js**
+4. Add environment variable:
+   ```
+   NEXT_PUBLIC_API_URL = https://your-render-url.onrender.com
+   ```
+
+### MongoDB Atlas Network Access
+- Go to **Network Access** → Add IP Address → **Allow Access from Anywhere** (`0.0.0.0/0`)
+- This is required for Render's dynamic IPs to connect
+
+---
+
+## 🤖 AI Pipeline Details
+
+### Lead Analysis Prompt (GPT-4o, temp: 0.3)
+The AI receives the lead's name, company, industry, and message, and returns:
+```json
+{
+  "industry_category": "FinTech / Lending",
+  "lead_quality_score": 8,
+  "priority_level": "High",
+  "recommended_marketing_strategy": "Focus on compliance-aware automation messaging..."
+}
+```
+
+### Campaign Generation Prompt (GPT-4o, temp: 0.7)
+The AI receives the lead data + strategy and generates:
+```json
+{
+  "subject": "AI-Powered Lead Qualification for FinTrack",
+  "preheader": "See how we help Finance companies automate growth",
+  "message": "Hi Sarah, we noticed FinTrack is looking to streamline..."
+}
+```
+
+### Fallback Behavior
+If OpenAI returns a 429 (quota exceeded) or any error:
+- Lead is still saved with `status: "analyzed"` 
+- Default score of 5, priority "Medium" assigned
+- Generic campaign message used
+- Pipeline continues without interruption
+
+---
+
+## 🔗 Zapier Integration
+
+1. Go to [zapier.com](https://zapier.com) → Create Zap
+2. Trigger: **Webhooks by Zapier** → **Catch Hook** → Copy URL
+3. Paste URL as `WEBHOOK_URL` in your backend `.env`
+4. Action: **Google Sheets** → Create Row
+5. Map fields: `leadName`, `company`, `industry`, `leadScore`, `priority`, `subject`
+6. Publish Zap
+
+Every new lead will automatically appear in your Google Sheet.
+
+---
+
+## 🧪 Running Tests
+
+```bash
+# Test health endpoint
+curl https://ai-marketing-automation-xtcx.onrender.com/health
+
+# Test lead creation
+curl -X POST https://ai-marketing-automation-xtcx.onrender.com/api/leads \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test User","email":"test@test.com","company":"TestCo","industry":"Technology","message":"Testing the API"}'
+
+# Test leads retrieval
+curl https://ai-marketing-automation-xtcx.onrender.com/api/leads
+
+# Test campaigns
+curl https://ai-marketing-automation-xtcx.onrender.com/api/campaigns
+
+# Test analytics
+curl https://ai-marketing-automation-xtcx.onrender.com/api/analytics/overview
+```
+
+---
+
+## 🐛 Common Issues & Fixes
+
+| Issue | Fix |
+|-------|-----|
+| `MongoDB ENOTFOUND` | Check MONGODB_URI is correct and Atlas IP whitelist includes `0.0.0.0/0` |
+| `@ in password` error | URL-encode `@` as `%40` in the connection string |
+| `Network Error` on frontend | Update `FRONTEND_URL` on Render to match your Vercel URL exactly (no trailing slash) |
+| `OpenAI 429 quota` | Add billing credits at platform.openai.com/billing |
+| `Route not found` on Render | Ensure Root Directory is set to `backend` in Render settings |
+| `node_modules in git` | Run `git rm --cached -r node_modules` and update `.gitignore` |
+
+---
+
+## 🗺️ Roadmap
+
+- [ ] Real email delivery (SendGrid / AWS SES)
+- [ ] JWT authentication for admin dashboard
+- [ ] Follow-up email sequences (Day 3, 7, 14)
+- [ ] A/B campaign testing
 - [ ] CSV bulk lead import
+- [ ] Slack notifications for high-priority leads
+- [ ] Mobile app (React Native)
+- [ ] Multi-user team accounts
 
 ---
 
 ## 👤 Author
 
-Built as a portfolio project demonstrating AI automation engineering.
+**Lokpavan**
+- GitHub: [@pavan1832](https://github.com/pavan1832)
+- Project: [ai-marketing-automation](https://github.com/pavan1832/ai-marketing-automation)
+
+---
+
+## 📄 License
+
+This project is built as a portfolio demonstration. Feel free to fork and adapt for your own projects.
+
+---
+
+<div align="center">
+  <strong>Built with ❤️ using Next.js, Node.js, MongoDB, and OpenAI GPT-4o</strong>
+</div>
