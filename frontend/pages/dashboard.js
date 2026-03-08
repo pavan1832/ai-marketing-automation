@@ -39,6 +39,9 @@ export default function Dashboard() {
   const totalIndustry = industry.reduce((a, d) => a + d.totalLeads, 0) || 1;
 
   return (
+    <div className="text-right text-sm text-gray-400 mb-2">
+  Developed by <span className="text-purple-400 font-medium">Lokpavan P</span>
+</div>
     <div className="animate-slide-up">
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, color: "white", marginBottom: 4 }}>
